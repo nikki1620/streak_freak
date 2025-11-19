@@ -18,7 +18,7 @@ export default function HabitCard({ habit }) {
   }
 
   return (
-    <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 shadow-xl hover:bg-white/15 hover:shadow-2xl hover:scale-[1.02] transition-all duration-300">
+    <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 shadow-xl hover:bg-white/15 hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 overflow-visible">
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1">
           <h3 className="text-2xl font-bold text-white mb-2 drop-shadow-md">{habit.name}</h3>
@@ -33,7 +33,9 @@ export default function HabitCard({ habit }) {
             </span>
           </div>
         </div>
-        <KebabMenu habit={habit} />
+        <div className="relative z-10">
+          <KebabMenu habit={habit} />
+        </div>
       </div>
     </div>
   )

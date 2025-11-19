@@ -77,17 +77,17 @@ export default function KebabMenu({ habit }) {
         </button>
 
         {isOpen && (
-          <div className="absolute right-0 top-full mt-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-lg shadow-xl z-50 min-w-[200px]">
+          <div className="absolute right-0 top-full mt-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-lg shadow-xl z-50 min-w-[200px] overflow-visible">
             {menuItems.map((item, idx) => {
               const Icon = item.icon
               return (
                 <button
                   key={idx}
                   onClick={item.onClick}
-                  className="w-full px-4 py-2 text-left hover:bg-white/10 transition-colors flex items-center gap-3 text-white/90 hover:text-white"
+                  className="w-full px-4 py-2 text-left hover:bg-white/10 transition-colors flex items-center gap-3 text-white/90 hover:text-white first:rounded-t-lg last:rounded-b-lg"
                 >
-                  <Icon className="w-4 h-4" />
-                  <span>{item.label}</span>
+                  <Icon className="w-4 h-4 flex-shrink-0" />
+                  <span className="whitespace-nowrap">{item.label}</span>
                 </button>
               )
             })}
