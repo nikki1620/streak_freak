@@ -20,7 +20,7 @@ export default function HabitCard({ habit }) {
 
   const handleToggleToday = () => {
     const wasCompleted = isCompletedToday
-    toggleDateCompletion(habit.id, todayStr)
+    toggleDateCompletion(habit.id, today)
 
     if (!wasCompleted) {
       confetti({
