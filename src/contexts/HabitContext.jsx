@@ -12,12 +12,21 @@ export function useHabits() {
   return context
 }
 
+export const CATEGORIES = [
+  'Health & Fitness',
+  'Learning & Growth',
+  'Money & Mindset',
+  'Creativity',
+  'Other'
+]
+
 const defaultHabits = [
   {
     id: '1',
     name: 'Gym',
     streakStartDate: formatDate(new Date()),
     priority: 'medium',
+    category: 'Health & Fitness',
     completedDates: [],
   },
   {
@@ -25,6 +34,7 @@ const defaultHabits = [
     name: 'Meditate',
     streakStartDate: formatDate(new Date()),
     priority: 'medium',
+    category: 'Money & Mindset',
     completedDates: [],
   },
   {
@@ -32,6 +42,7 @@ const defaultHabits = [
     name: 'Drink Water',
     streakStartDate: formatDate(new Date()),
     priority: 'medium',
+    category: 'Health & Fitness',
     completedDates: [],
   },
 ]
@@ -47,6 +58,8 @@ export function HabitProvider({ children }) {
       frequency: habit.frequency || 'daily',
       streakStartDate: habit.streakStartDate || formatDate(new Date()),
       priority: habit.priority || 'medium',
+      category: habit.category || 'Other',
+      emoji: habit.emoji || '✨',
       completedDates: [],
     }
     setHabits((prev) => [...prev, newHabit])

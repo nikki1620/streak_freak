@@ -1,122 +1,139 @@
-import { useMemo, useState } from 'react'
-import { HabitProvider, useHabits } from './contexts/HabitContext'
+import { useState } from 'react'
+import { useHabits, CATEGORIES } from './contexts/HabitContext'
 import HabitCard from './components/HabitCard'
+import AddHabitDialog from './components/AddHabitDialog'
+import WeeklyProgress from './components/WeeklyProgress'
+import Navbar from './components/Navbar'
 import AIInsights from './components/AIInsights'
 import AuroraBackground from './components/AuroraBackground'
-import AddHabitDialog from './components/AddHabitDialog'
-import { Plus } from 'lucide-react'
-import { calculateStreak } from './utils/streakCalculator'
+import LoginModal from './components/Auth/LoginModal'
+import SignupModal from './components/Auth/SignupModal'
+import Footer from './components/Footer'
+import { useAuth } from './contexts/AuthContext'
+import { motion, AnimatePresence } from 'framer-motion'
 
 function AppContent() {
   const { habits } = useHabits()
-  const [showAddDialog, setShowAddDialog] = useState(false)
+  const { user } = useAuth()
+  const [showAddHabit, setShowAddHabit] = useState(false)
+  const [showWeeklyProgress, setShowWeeklyProgress] = useState(false)
+  const [showLogin, setShowLogin] = useState(false)
+  const [showSignup, setShowSignup] = useState(false)
+  const [selectedCategory, setSelectedCategory] = useState('All')
 
-  const sortedHabits = useMemo(() => {
-    const habitsWithStreaks = habits.map(habit => ({
-      ...habit,
-      streak: calculateStreak(habit),
-    }))
-
-    // Sort: High priority first, then by streak length
-    const highPriority = habitsWithStreaks
-      .filter(h => h.priority === 'high')
-      .sort((a, b) => b.streak - a.streak)
-    
-    const mediumPriority = habitsWithStreaks
-      .filter(h => h.priority === 'medium')
-      .sort((a, b) => b.streak - a.streak)
-    
-    const lowPriority = habitsWithStreaks
-      .filter(h => h.priority === 'low')
-      .sort((a, b) => b.streak - a.streak)
-
-    return [...highPriority, ...mediumPriority, ...lowPriority]
-  }, [habits])
-
-  const top3HighPriority = sortedHabits.filter(h => h.priority === 'high').slice(0, 3)
-  const remainingHabits = sortedHabits.filter(h => !top3HighPriority.includes(h))
+  const filteredHabits = selectedCategory === 'All'
+    ? habits
+    : habits.filter(h => h.category === selectedCategory)
 
   return (
-    <div className="min-h-screen relative">
+    <div className="min-h-screen text-white font-sans selection:bg-purple-500/30 pb-20">
       <AuroraBackground />
-      <div className="relative z-10 container mx-auto px-4 py-8 max-w-6xl">
-        <header className="mb-8">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
-            <div className="text-center md:text-left flex-1">
-              <h1 className="text-4xl md:text-5xl font-bold text-white mb-2 drop-shadow-lg">
-                Streak Freak
-              </h1>
-              <p className="text-white/80 text-base md:text-lg">Your Personal Habit Tracker for Wellness</p>
-            </div>
-            <div className="flex justify-center md:justify-end">
-              <button
-                onClick={() => setShowAddDialog(true)}
-                className="flex items-center gap-2 px-4 md:px-6 py-2 md:py-3 bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/30 rounded-xl text-white font-semibold transition-all hover:scale-105 shadow-lg text-sm md:text-base"
-                aria-label="Add New Habit"
-              >
-                <Plus className="w-4 h-4 md:w-5 md:h-5" />
-                <span className="hidden sm:inline">Add New Habit</span>
-                <span className="sm:hidden">Add Habit</span>
-              </button>
-            </div>
-          </div>
-        </header>
 
+      <Navbar
+        onAddHabit={() => setShowAddHabit(true)}
+        onWeeklyProgress={() => setShowWeeklyProgress(true)}
+        onLogin={() => setShowLogin(true)}
+        user={user}
+      />
+
+      <main className="container mx-auto px-4 pt-28 pb-32 max-w-5xl">
         <AIInsights />
 
-        {top3HighPriority.length > 0 && (
-          <section className="mb-8">
-            <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
-              <span className="text-yellow-400">⭐</span>
-              Top 3 High Priority Streaks
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold flex items-center gap-2">
+              <span className="text-purple-400">●</span>
+              Your Habits
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {top3HighPriority.map((habit) => (
-                <HabitCard key={habit.id} habit={habit} />
-              ))}
-            </div>
-          </section>
-        )}
+            <span className="text-white/40 text-sm font-medium">
+              {filteredHabits.length} {filteredHabits.length === 1 ? 'Habit' : 'Habits'}
+            </span>
+          </div>
 
-        {remainingHabits.length > 0 && (
-          <section>
-            <h2 className="text-2xl font-bold text-white mb-4">All Habits</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {remainingHabits.map((habit) => (
-                <HabitCard key={habit.id} habit={habit} />
-              ))}
-            </div>
-          </section>
-        )}
-
-        {habits.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-white/80 text-lg mb-4">No habits yet. Start tracking your wellness journey!</p>
+          <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
             <button
-              onClick={() => setShowAddDialog(true)}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/30 rounded-xl text-white font-semibold transition-all hover:scale-105 shadow-lg"
+              onClick={() => setSelectedCategory('All')}
+              className={`
+                whitespace-nowrap px-4 py-2 rounded-xl text-sm font-bold transition-all
+                ${selectedCategory === 'All'
+                  ? 'bg-white text-purple-900 shadow-lg shadow-white/10'
+                  : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'
+                }
+              `}
             >
-              <Plus className="w-5 h-5" />
-              Add Your First Habit
+              All Habits
             </button>
+            {CATEGORIES.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                className={`
+                  whitespace-nowrap px-4 py-2 rounded-xl text-sm font-bold transition-all
+                  ${selectedCategory === cat
+                    ? 'bg-white text-purple-900 shadow-lg shadow-white/10'
+                    : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'
+                  }
+                `}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {filteredHabits.length === 0 ? (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center py-20 glass-panel rounded-3xl border-dashed border-2 border-white/10"
+          >
+            <div className="text-6xl mb-4">🌱</div>
+            <h3 className="text-2xl font-bold text-white mb-2">No habits found</h3>
+            <p className="text-white/50 mb-6 max-w-md mx-auto">
+              {selectedCategory === 'All'
+                ? "You haven't started any habits yet. This is the beginning of your journey!"
+                : `You don't have any habits in the "${selectedCategory}" category yet.`
+              }
+            </p>
+            <button
+              onClick={() => setShowAddHabit(true)}
+              className="px-8 py-3 bg-white text-purple-900 rounded-xl font-bold hover:bg-purple-50 transition-colors shadow-lg shadow-white/10"
+            >
+              Create First Habit
+            </button>
+          </motion.div>
+        ) : (
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <AnimatePresence mode="popLayout">
+              {filteredHabits.map((habit) => (
+                <motion.div
+                  key={habit.id}
+                  layout
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <HabitCard habit={habit} />
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
         )}
+      </main>
 
-        {showAddDialog && (
-          <AddHabitDialog onClose={() => setShowAddDialog(false)} />
-        )}
-      </div>
+      <Footer />
+
+      <AnimatePresence>
+        {showAddHabit && <AddHabitDialog onClose={() => setShowAddHabit(false)} />}
+        {showWeeklyProgress && <WeeklyProgress onClose={() => setShowWeeklyProgress(false)} />}
+        {showLogin && <LoginModal onClose={() => setShowLogin(false)} onSwitchToSignup={() => { setShowLogin(false); setShowSignup(true) }} />}
+        {showSignup && <SignupModal onClose={() => setShowSignup(false)} onSwitchToLogin={() => { setShowSignup(false); setShowLogin(true) }} />}
+      </AnimatePresence>
     </div>
   )
 }
 
-function App() {
-  return (
-    <HabitProvider>
-      <AppContent />
-    </HabitProvider>
-  )
+export default function App() {
+  return <AppContent />
 }
-
-export default App
-
