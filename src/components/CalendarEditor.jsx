@@ -47,41 +47,47 @@ export default function CalendarEditor({ habit, onClose }) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-[14000] flex items-center justify-center p-4">
+      <div className="bg-slate-900/95 backdrop-blur-xl border border-white/20 rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto text-white shadow-2xl">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-white">Edit Calendar - {habit.name}</h2>
+          <h2 className="text-xl md:text-2xl font-bold text-white pr-2">
+            <span className="hidden sm:inline">Edit Calendar - </span>
+            {habit.name}
+          </h2>
           <button
             onClick={onClose}
-            className="text-white/80 hover:text-white transition-colors"
+            className="text-white/80 hover:text-white transition-colors flex-shrink-0 p-1 rounded-lg hover:bg-white/10"
+            aria-label="Close"
           >
             <X className="w-6 h-6" />
           </button>
         </div>
 
-        <div className="mb-4 flex items-center justify-between">
+        <div className="mb-4 flex items-center justify-between gap-2">
           <button
             onClick={goToPreviousMonth}
             disabled={currentMonth <= startOfMonth(streakStart)}
-            className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="px-3 md:px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm md:text-base"
           >
-            ← Previous
+            <span className="hidden sm:inline">← Previous</span>
+            <span className="sm:hidden">←</span>
           </button>
-          <h3 className="text-xl font-semibold text-white">
+          <h3 className="text-lg md:text-xl font-semibold text-white text-center flex-1">
             {format(currentMonth, 'MMMM yyyy')}
           </h3>
           <button
             onClick={goToNextMonth}
             disabled={currentMonth >= startOfMonth(today)}
-            className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="px-3 md:px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm md:text-base"
           >
-            Next →
+            <span className="hidden sm:inline">Next →</span>
+            <span className="sm:hidden">→</span>
           </button>
         </div>
 
         <div className="grid grid-cols-7 gap-2 mb-2">
           {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-            <div key={day} className="text-center text-white/60 text-sm font-medium py-2">
+            <div key={day} className="text-center text-white/80 text-sm font-semibold py-2 tracking-wide">
               {day}
             </div>
           ))}
@@ -103,12 +109,12 @@ export default function CalendarEditor({ habit, onClose }) {
                 key={idx}
                 onClick={() => handleDateClick(day)}
                 className={`
-                  aspect-square rounded-lg transition-all
+                  aspect-square rounded-xl transition-all border border-white/10
                   ${completed
-                    ? 'bg-green-500/80 hover:bg-green-500 text-white'
-                    : 'bg-white/10 hover:bg-white/20 text-white/80'
+                    ? 'bg-green-500/90 hover:bg-green-500 text-white shadow-lg'
+                    : 'bg-white/5 hover:bg-white/15 text-white/90'
                   }
-                  ${isToday ? 'ring-2 ring-yellow-400' : ''}
+                  ${isToday ? 'ring-2 ring-yellow-300' : ''}
                   flex items-center justify-center
                 `}
               >
@@ -124,7 +130,7 @@ export default function CalendarEditor({ habit, onClose }) {
         <div className="mt-6 flex justify-end">
           <button
             onClick={onClose}
-            className="px-6 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-white font-medium transition-colors"
+            className="px-6 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-white font-semibold transition-colors"
           >
             Done
           </button>

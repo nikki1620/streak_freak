@@ -43,6 +43,8 @@ export function HabitProvider({ children }) {
     const newHabit = {
       id: Date.now().toString(),
       name: habit.name,
+      description: habit.description || '',
+      frequency: habit.frequency || 'daily',
       streakStartDate: habit.streakStartDate || formatDate(new Date()),
       priority: habit.priority || 'medium',
       completedDates: [],
