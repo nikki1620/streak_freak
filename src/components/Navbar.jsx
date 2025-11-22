@@ -3,7 +3,7 @@ import { Menu, X, Plus, BarChart2, LogIn, User, LogOut } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import ProfileMenu from './Auth/ProfileMenu'
 
-export default function Navbar({ onAddHabit, onWeeklyProgress, onLogin, user }) {
+export default function Navbar({ onAddHabit, onWeeklyProgress, user }) {
     const [isScrolled, setIsScrolled] = useState(false)
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
@@ -59,17 +59,7 @@ export default function Navbar({ onAddHabit, onWeeklyProgress, onLogin, user }) 
 
                         <div className="w-px h-6 bg-white/10 mx-1" />
 
-                        {user ? (
-                            <ProfileMenu user={user} />
-                        ) : (
-                            <button
-                                onClick={onLogin}
-                                className="px-4 py-2 rounded-xl text-sm font-bold text-white border border-white/10 hover:bg-white/10 transition-all flex items-center gap-2"
-                            >
-                                <LogIn className="w-4 h-4" />
-                                Sign In
-                            </button>
-                        )}
+                        {user && <ProfileMenu user={user} />}
                     </div>
 
                     {/* Mobile Menu Button */}
@@ -135,7 +125,7 @@ export default function Navbar({ onAddHabit, onWeeklyProgress, onLogin, user }) 
 
                                 <div className="h-px bg-white/10 my-4" />
 
-                                {user ? (
+                                {user && (
                                     <div className="space-y-4">
                                         <div className="flex items-center gap-3 px-4">
                                             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-bold">
@@ -146,19 +136,7 @@ export default function Navbar({ onAddHabit, onWeeklyProgress, onLogin, user }) 
                                                 <p className="text-xs text-white/50">Logged in</p>
                                             </div>
                                         </div>
-                                        {/* Logout logic would go here */}
                                     </div>
-                                ) : (
-                                    <button
-                                        onClick={() => {
-                                            onLogin()
-                                            setIsMobileMenuOpen(false)
-                                        }}
-                                        className="w-full py-3 px-4 rounded-xl border border-white/10 text-white font-bold hover:bg-white/5 transition-colors flex items-center justify-center gap-2"
-                                    >
-                                        <LogIn className="w-5 h-5" />
-                                        Sign In
-                                    </button>
                                 )}
                             </div>
                         </motion.div>

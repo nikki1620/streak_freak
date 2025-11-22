@@ -6,20 +6,29 @@ import WeeklyProgress from './components/WeeklyProgress'
 import Navbar from './components/Navbar'
 import AIInsights from './components/AIInsights'
 import AuroraBackground from './components/AuroraBackground'
-import LoginModal from './components/Auth/LoginModal'
-import SignupModal from './components/Auth/SignupModal'
 import Footer from './components/Footer'
+import LoginPage from './components/LoginPage'
 import { useAuth } from './contexts/AuthContext'
 import { motion, AnimatePresence } from 'framer-motion'
 
 function AppContent() {
   const { habits } = useHabits()
-  const { user } = useAuth()
+  const { user, loading } = useAuth()
   const [showAddHabit, setShowAddHabit] = useState(false)
   const [showWeeklyProgress, setShowWeeklyProgress] = useState(false)
-  const [showLogin, setShowLogin] = useState(false)
-  const [showSignup, setShowSignup] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState('All')
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black text-white">
+        <div className="w-8 h-8 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    )
+  }
+
+  if (!user) {
+    return <LoginPage />
+  }
 
   const highPriorityHabits = habits.filter(h => h.priority === 'high')
 
@@ -48,7 +57,6 @@ function AppContent() {
       <Navbar
         onAddHabit={() => setShowAddHabit(true)}
         onWeeklyProgress={() => setShowWeeklyProgress(true)}
-        onLogin={() => setShowLogin(true)}
         user={user}
       />
 
@@ -169,8 +177,6 @@ function AppContent() {
       <AnimatePresence>
         {showAddHabit && <AddHabitDialog onClose={() => setShowAddHabit(false)} />}
         {showWeeklyProgress && <WeeklyProgress onClose={() => setShowWeeklyProgress(false)} />}
-        {showLogin && <LoginModal onClose={() => setShowLogin(false)} onSwitchToSignup={() => { setShowLogin(false); setShowSignup(true) }} />}
-        {showSignup && <SignupModal onClose={() => setShowSignup(false)} onSwitchToLogin={() => { setShowSignup(false); setShowLogin(true) }} />}
       </AnimatePresence>
     </div>
   )

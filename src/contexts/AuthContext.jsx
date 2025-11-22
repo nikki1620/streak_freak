@@ -12,16 +12,26 @@ export function AuthProvider({ children }) {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        // Check active session
-        authService.getUser().then(({ user }) => {
+        const checkUser = (user) => {
+            if (user && user.email !== 'putcha.nikhila3@gmail.com') {
+                alert('You are not Nikhila. Sorry about that.')
+                authService.signOut()
+                setUser(null)
+                setLoading(false)
+                return
+            }
             setUser(user)
             setLoading(false)
+        }
+
+        // Check active session
+        authService.getUser().then(({ user }) => {
+            checkUser(user)
         })
 
         // Listen for changes
         const { data: subscription } = authService.onAuthStateChange((event, user) => {
-            setUser(user)
-            setLoading(false)
+            checkUser(user)
         })
 
         return () => {
